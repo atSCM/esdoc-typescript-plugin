@@ -2,6 +2,22 @@
   "name": "@atscm/esdoc-typescript-plugin",
   "version": "0.0.0",
   "description": "ESDoc TypeScript plugin that actually works",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atSCM/esdoc-typescript-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atSCM/esdoc-typescript-plugin/issues"
+  },
+  "homepage": "https://github.com/atSCM/esdoc-typescript-plugin#readme",
+  "author": "Lukas Hechenberger <npm@ls-age.com>",
+  "keywords": [
+    "esdoc",
+    "plugin",
+    "typescript",
+    "ts"
+  ],
   "main": "out/plugin.js",
   "scripts": {
     "build": "tsc",
@@ -10,14 +26,9 @@
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "esdoc",
-    "plugin",
-    "typescript",
-    "ts"
-  ],
-  "author": "Lukas Hechenberger <npm@ls-age.com>",
-  "license": "MIT",
+  "dependencies": {
+    "typescript": "^3.6.4"
+  },
   "peerDependencies": {
     "esdoc": "^1.1.0"
   },
@@ -29,8 +40,5 @@
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
     "prettier": "^1.18.2"
-  },
-  "dependencies": {
-    "typescript": "^3.6.4"
   }
 }
