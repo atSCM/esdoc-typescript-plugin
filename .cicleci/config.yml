@@ -1,0 +1,106 @@
+version: 2.1
+
+orbs:
+  local:
+    executors:
+      node:
+        docker:
+          - image: circleci/node:12
+    commands:
+      attach:
+        steps:
+          - checkout:
+              path: ~/project
+          - attach_workspace:
+              at: ~/project
+      git-login:
+        steps:
+          - run:
+              name: Setting up git user
+              command: git config --global user.email ci@ls-age.com && git config --global user.name "ls-age CI"
+      npm-login:
+        steps:
+          - run:
+              name: Logging in to npm
+              command: echo "$NPM_TOKEN" > ../.npmrc
+
+jobs:
+  install:
+    executor: local/node
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-npm-deps-{{ checksum "package-lock.json" }}
+            - v2-npm-deps
+      - run:
+          name: Installing npm dependencies
+          command: npm ci
+      - save_cache:
+          key: v2-npm-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  build:
+    executor: local/node
+    steps:
+      - local/attach
+      - run:
+          name: Exporting app
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - out
+
+  lint:
+    executor: local/node
+    steps:
+      - local/attach
+      - run:
+          name: Lint sources
+          command: npm run lint -- --format junit --output-file ~/reports/eslint.xml
+      - run:
+          name: Check formatting
+          command: npm run format -- --check
+      - store_test_results:
+          path: ~/reports
+      - store_artifacts:
+          path: ~/reports
+
+  deploy:
+    executor: local/node
+    steps:
+      - local/attach
+      - local/git-login
+      - local/npm-login
+      - deploy:
+          name: Deploy changes
+          command: npx @ls-age/bump-version release --gh-token $RELEASE_GITHUB_TOKEN
+
+workflows:
+  version: 2
+
+  default:
+    jobs:
+      - install
+      - build:
+          requires:
+            - install
+      - lint:
+          requires:
+            - install
+      - deploy:
+          requires:
+            - build
+            - lint
+          filters:
+            branches:
+              only:
+                - master
+                - beta
