@@ -2,7 +2,7 @@
 
 import * as path from 'path';
 import ts, { JsxEmit, SourceFile, Node } from 'typescript';
-import CommentParser from '/Users/lukas/Downloads/delete/external/node_modules/esdoc/out/src/Parser/CommentParser'; // eslint-disable-line import/no-unresolved
+import CommentParser from 'esdoc/out/src/Parser/CommentParser'; // eslint-disable-line import/no-unresolved
 import { Plugin } from 'esdoc'; // eslint-disable-line import/no-unresolved
 
 class TypescriptPlugin implements Plugin {
